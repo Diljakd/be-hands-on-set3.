@@ -43,4 +43,18 @@
 
 	    Optional<Booking> findByIdempotencyKey(String idempotencyKey);
 	}
+	
+	@EntityGraph(attributePaths = {"attendeeEmails", "room"})
+	@Query("""
+	    SELECT DISTINCT b
+	    FROM Booking b
+	    WHERE b.status = :status
+	      AND b.startTime < :rangeEnd
+	      AND b.endTime > :rangeStart
+	    """)
+	List<Booking> findActiveBookingsInRange(
+	        @Param("status") BookingStatus status,
+	        @Param("rangeStart") LocalDateTime rangeStart,
+	        @Param("rangeEnd") LocalDateTime rangeEnd
+	);
 }
